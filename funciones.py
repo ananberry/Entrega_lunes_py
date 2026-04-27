@@ -16,23 +16,14 @@ def cargar_prestamos():
 def limpiar_usuarios(df_archivo):
     print("Limpiando datos de usuarios...")
 
-<<<<<<< HEAD
+
     df_archivo['ID_usuario'] = df_archivo['ID_usuario'].astype(str).str.strip()
     df_archivo['nombre'] = df_archivo['nombre'].astype(str).str.strip().str.title()
     df_archivo['rol'] = df_archivo['rol'].astype(str).str.strip().str.title()
     df_archivo['correo'] = df_archivo['correo'].astype(str).str.strip().str.lower()
-=======
-    df_archivo['ID_Persona'] = df_archivo['ID_Persona'].astype(str).str.strip()
-    df_archivo['Nombre'] = df_archivo['Nombre'].astype(str).str.strip().str.title()
-    df_archivo['Rol'] = df_archivo['Rol'].astype(str).str.strip().str.title()
-    df_archivo['Correo'] = df_archivo['Correo'].astype(str).str.strip().str.lower()
->>>>>>> 69345f2563ce315b5f2b4913b66339633e7ba677
 
     return df_archivo
 
-
-<<<<<<< HEAD
-=======
 # Limpiar texto de préstamos (eliminar espacios y normalizar mayúsculas)
 def limpiar_prestamos(df_prestamos):
     print("Limpiando datos de préstamos...")
@@ -47,8 +38,6 @@ def limpiar_prestamos(df_prestamos):
 
     return df_prestamos
 
-
->>>>>>> 69345f2563ce315b5f2b4913b66339633e7ba677
 # Manejar nulos
 def manejar_nulos(df_archivo, metodo="eliminar"):
     print("Manejo de valores nulos")
@@ -66,29 +55,18 @@ def manejar_nulos(df_archivo, metodo="eliminar"):
         elif metodo == "rellenar":
             print("Rellenando valores...")
 
-<<<<<<< HEAD
-            df_archivo["nombre"] = df_archivo["nombre"].fillna("desconocido")
-            df_archivo["rol"] = df_archivo["rol"].fillna(
-                df_archivo["rol"].mode()[0] if not df_archivo["rol"].mode().empty else "sin_rol"
-            )
-            df_archivo["correo"] = df_archivo["correo"].fillna("sin_correo")
-=======
             df_archivo["Nombre"] = df_archivo["Nombre"].fillna("desconocido")
             df_archivo["Rol"] = df_archivo["Rol"].fillna(
                 df_archivo["Rol"].mode()[0] if not df_archivo["Rol"].mode().empty else "sin_rol"
             )
             df_archivo["Correo"] = df_archivo["Correo"].fillna("sin_correo")
->>>>>>> 69345f2563ce315b5f2b4913b66339633e7ba677
+
 
         else:
             print("Método no válido")
 
     else:
         print("No se encontraron valores nulos.")
-
-<<<<<<< HEAD
-    return df_archivo
-=======
     return df_archivo
 
 
@@ -148,4 +126,4 @@ def unir_datos(df_prestamos, df_usuarios):
 def filtrar_prestamos(df_merge, estado):
     df_filtrado = df_merge[df_merge['Estado'].str.lower() == estado.lower()]
     return df_filtrado
->>>>>>> 69345f2563ce315b5f2b4913b66339633e7ba677
+
