@@ -1,129 +1,164 @@
-import pandas as pd
+import pandas as pd # type: ignore
+
 
 # Cargar datos
+
 def cargar_usuarios():
-    df_archivo = pd.read_csv('data/raw/usuarios.csv')
-    df_archivo.info()
-    return df_archivo
+    df_usuarios = pd.read_csv("data/raw/usuarios.csv")
+    return df_usuarios
+
 
 def cargar_prestamos():
-    df_prestamos = pd.read_csv('data/raw/prestamos.csv')
-    df_prestamos.info()
+    df_prestamos = pd.read_csv("data/raw/prestamos.csv")
     return df_prestamos
 
 
-# Limpiar texto
-def limpiar_usuarios(df_archivo):
-    print("Limpiando datos de usuarios...")
+# Ver datos
+
+def ver_datos(df, nombre):
+
+    print(f"\n===== {nombre} =====")
+    print(df.head())
 
 
-    df_archivo['ID_usuario'] = df_archivo['ID_usuario'].astype(str).str.strip()
-    df_archivo['nombre'] = df_archivo['nombre'].astype(str).str.strip().str.title()
-    df_archivo['rol'] = df_archivo['rol'].astype(str).str.strip().str.title()
-    df_archivo['correo'] = df_archivo['correo'].astype(str).str.strip().str.lower()
+# Ver nulos
+def ver_nulos(df):
 
-    return df_archivo
+    print("\n===== VALORES NULOS =====")
+    print(df.isnull().sum())
 
-# Limpiar texto de préstamos (eliminar espacios y normalizar mayúsculas)
-def limpiar_prestamos(df_prestamos):
-    print("Limpiando datos de préstamos...")
 
-    df_prestamos['ID_Prestamo'] = df_prestamos['ID_Prestamo'].astype(str).str.strip()
-    df_prestamos['ID_Persona'] = df_prestamos['ID_Persona'].astype(str).str.strip()
-    df_prestamos['Objeto'] = df_prestamos['Objeto'].astype(str).str.strip().str.title()
-    df_prestamos['Estado'] = df_prestamos['Estado'].astype(str).str.strip().str.title()
+# Encontrar errores
 
-    print("Datos de préstamos limpios:")
-    print(df_prestamos.head())
+def encontrar_errores(df):
 
-    return df_prestamos
+    print("\n===== POSIBLES ERRORES =====")
+
+    duplicados = df.duplicated().sum()
+
+    print(f"Filas duplicadas: {duplicados}")
+
 
 # Manejar nulos
-def manejar_nulos(df_archivo, metodo="eliminar"):
-    print("Manejo de valores nulos")
 
-    print("Valores nulos por columna:")
-    print(df_archivo.isnull().sum())
+def manejar_nulos(df, metodo):
 
-    if df_archivo.isnull().sum().any():
-        print("Se encontraron valores nulos")
+    if metodo == "eliminar":
 
-        if metodo == "eliminar":
-            print("Eliminando filas...")
-            df_archivo = df_archivo.dropna()
+        df = df.dropna()
 
-        elif metodo == "rellenar":
-            print("Rellenando valores...")
+    elif metodo == "rellenar":
 
-            df_archivo["Nombre"] = df_archivo["Nombre"].fillna("desconocido")
-            df_archivo["Rol"] = df_archivo["Rol"].fillna(
-                df_archivo["Rol"].mode()[0] if not df_archivo["Rol"].mode().empty else "sin_rol"
-            )
-            df_archivo["Correo"] = df_archivo["Correo"].fillna("sin_correo")
+        for columna in df.columns:
+
+            if df[columna].dtype == "object":
+
+                df[columna] = df[columna].fillna("desconocido")
+
+    return df
 
 
-        else:
-            print("Método no válido")
+# Limpiar datos de usuarios
 
-    else:
-        print("No se encontraron valores nulos.")
-    return df_archivo
+def limpiar_usuarios(df):
+
+    print("\nLimpiando usuarios...")
+
+    df.columns = df.columns.str.lower()
+
+    df["id_persona"] = df["id_persona"].astype(str).str.strip()
+
+    df["nombre"] = df["nombre"].astype(str).str.strip().str.title()
+
+    df["rol"] = df["rol"].astype(str).str.strip().str.title()
+
+    df["correo"] = df["correo"].astype(str).str.strip().str.lower()
+
+    return df
+
+# Limpiar datos de prestamos
+
+def limpiar_prestamos(df):
+
+    print("\nLimpiando prestamos...")
+
+    df.columns = df.columns.str.lower()
+
+    df["id_prestamo"] = df["id_prestamo"].astype(str).str.strip()
+
+    df["id_persona"] = df["id_persona"].astype(str).str.strip()
+
+    df["objeto"] = df["objeto"].astype(str).str.strip().str.title()
+
+    df["estado"] = df["estado"].astype(str).str.strip().str.title()
+
+    return df
 
 
-# Filtrar préstamos por estado
-def filtrar_por_estado(df_prestamos, estado):
-    print(f"\nFiltrando préstamos con estado: '{estado}'...")
-    df_filtrado = df_prestamos[df_prestamos['Estado'].str.lower() == estado.lower()]
-    print(f"Se encontraron {len(df_filtrado)} préstamos con estado '{estado}':")
-    print(df_filtrado.to_string(index=False))
-    return df_filtrado
+# Ver datos limpios
+
+def ver_datos_limpios(df, nombre):
+
+    print(f"\n===== {nombre} =====")
+    print(df.head())
 
 
-# Combinar (merge) usuarios y préstamos
-def combinar_datos(df_usuarios, df_prestamos):
-    print("\nCombinando datos de usuarios y préstamos...")
-    df_combinado = pd.merge(
+# Frecuencia
+
+def frecuencia_objetos(df):
+
+    resultado = df["objeto"].value_counts()
+
+    return resultado
+
+
+#Agrupación
+
+def agrupacion_prestamos(df):
+
+    resultado = df.groupby("estado")["id_prestamo"].count()
+
+    return resultado
+
+
+# Unir datos
+
+def unir_datos(df_prestamos, df_usuarios):
+
+    df_merge = pd.merge(
         df_prestamos,
         df_usuarios,
-        on='ID_Persona',
-        how='inner'
+        on="id_persona"
     )
-    print(f"Total de registros combinados: {len(df_combinado)}")
-    print(df_combinado[['ID_Prestamo', 'Nombre', 'Rol', 'Objeto', 'Estado']].to_string(index=False))
-    return df_combinado
 
-
-# Agrupar préstamos por rol de usuario
-def agrupar_por_rol(df_combinado):
-    print("\nAgrupando préstamos por rol de usuario...")
-    agrupado = df_combinado.groupby('Rol').agg(
-        total_prestamos=('ID_Prestamo', 'count')
-    ).reset_index()
-    print(agrupado.to_string(index=False))
-    return agrupado
-
-
-# Frecuencia de objetos prestados
-def frecuencia_objetos(df_prestamos):
-    resultado = df_prestamos['Objeto'].value_counts()
-    return resultado
-
-
-# Agrupación de préstamos por estado
-def agrupacion_prestamos(df_prestamos):
-    resultado = df_prestamos.groupby('Estado')['ID_Prestamo'].count().reset_index()
-    resultado.columns = ['Estado', 'Total']
-    return resultado
-
-
-# Unir usuarios y préstamos
-def unir_datos(df_prestamos, df_usuarios):
-    df_merge = pd.merge(df_prestamos, df_usuarios, on='ID_Persona', how='inner')
     return df_merge
 
 
-# Filtrar préstamos por estado
-def filtrar_prestamos(df_merge, estado):
-    df_filtrado = df_merge[df_merge['Estado'].str.lower() == estado.lower()]
-    return df_filtrado
 
+# Filtrar prestamos por estado
+
+
+def filtrar_prestamos(df, estado):
+
+    filtrado = df[df["estado"] == estado]
+
+    return filtrado
+
+
+
+# Funcion especial
+
+
+def prestamos_atrasados(df):
+
+    print("\n===== PRESTAMOS ATRASADOS =====")
+
+    if "dias_prestamo" in df.columns:
+
+        atrasados = df[df["dias_prestamo"] > 30]
+
+        print(atrasados)
+
+    else:
+
+        print("No existe la columna dias_prestamo")

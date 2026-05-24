@@ -1,12 +1,55 @@
-# Entornos virtuales
-.venv/
-venv/
-env/
-
-# Archivos de compilación de Python
+# =========================
+# Python
+# =========================
 __pycache__/
-*.pyc
+*.py[cod]
+*.pyo
+*.pyd
 
-# Archivos del sistema
+# Entornos virtuales
+venv/
+.venv/
+env/
+ENV/
+
+# Archivos de logs
+*.log
+
+# =========================
+# Flask / Python cache
+# =========================
+instance/
+.webassets-cache
+
+# =========================
+# Variables de entorno
+# =========================
+.env
+
+# =========================
+# Jupyter (si lo usas)
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# Sistema operativo
+# =========================
 .DS_Store
 Thumbs.db
+
+# =========================
+# IDEs (VS Code)
+# =========================
+.vscode/
+
+# =========================
+# Matplotlib cache (importante para tu caso)
+# =========================
+.matplotlib/
+
+# =========================
+# React (si tienes frontend)
+# =========================
+node_modules/
+build/
+dist/
